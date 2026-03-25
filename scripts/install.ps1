@@ -19,7 +19,12 @@ function Get-Arch {
 }
 
 function Get-LatestReleaseAssetUrl($owner, $repo, $rid) {
-    $release = Invoke-RestMethod -Headers @{ 'User-Agent' = 'OpenClawWindowsNodeInstaller' } -Uri "https://api.github.com/repos/$owner/$repo/releases/latest"
+    try {
+        $release = Invoke-RestMethod -Headers @{ 'User-Agent' = 'OpenClawWindowsNodeInstaller' } -Uri "https://api.github.com/repos/$owner/$repo/releases/latest"
+    } catch {
+        throw "No GitHub release exists yet for $owner/$repo. Publish the first release before using the stable bootstrap installer."
+    }
+
     $asset = $release.assets | Where-Object { $_.name -like "*${rid}.zip" } | Select-Object -First 1
     if (-not $asset) { throw "No matching ZIP asset found for $rid in latest release" }
     return $asset.browser_download_url

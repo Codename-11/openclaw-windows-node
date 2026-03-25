@@ -52,8 +52,11 @@ public class SettingsManager
 
     // Updater
     public bool UpdaterEnabled { get; set; } = true;
+    public UpdateChannel UpdaterChannel { get; set; } = UpdateChannel.Stable;
     public string UpdaterGitHubOwner { get; set; } = DefaultUpdaterGitHubOwner;
     public string UpdaterGitHubRepo { get; set; } = DefaultUpdaterGitHubRepo;
+    public string UpdaterGitHubBranch { get; set; } = "main";
+    public string? UpdaterGitHubCommitSha { get; set; }
 
     public SettingsManager()
     {
@@ -89,8 +92,11 @@ public class SettingsManager
                     NotifyChatResponses = loaded.NotifyChatResponses;
                     PreferStructuredCategories = loaded.PreferStructuredCategories;
                     UpdaterEnabled = loaded.UpdaterEnabled;
+                    UpdaterChannel = loaded.UpdaterChannel;
                     UpdaterGitHubOwner = loaded.UpdaterGitHubOwner ?? UpdaterGitHubOwner;
                     UpdaterGitHubRepo = loaded.UpdaterGitHubRepo ?? UpdaterGitHubRepo;
+                    UpdaterGitHubBranch = string.IsNullOrWhiteSpace(loaded.UpdaterGitHubBranch) ? UpdaterGitHubBranch : loaded.UpdaterGitHubBranch;
+                    UpdaterGitHubCommitSha = string.IsNullOrWhiteSpace(loaded.UpdaterGitHubCommitSha) ? null : loaded.UpdaterGitHubCommitSha;
                     if (loaded.UserRules != null)
                         UserRules = loaded.UserRules;
                 }
@@ -129,8 +135,11 @@ public class SettingsManager
                 NotifyChatResponses = NotifyChatResponses,
                 PreferStructuredCategories = PreferStructuredCategories,
                 UpdaterEnabled = UpdaterEnabled,
+                UpdaterChannel = UpdaterChannel,
                 UpdaterGitHubOwner = UpdaterGitHubOwner,
                 UpdaterGitHubRepo = UpdaterGitHubRepo,
+                UpdaterGitHubBranch = UpdaterGitHubBranch,
+                UpdaterGitHubCommitSha = UpdaterGitHubCommitSha,
                 UserRules = UserRules
             };
 

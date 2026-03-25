@@ -26,8 +26,11 @@ public class SettingsData
     public bool NotifyChatResponses { get; set; } = true;
     public bool PreferStructuredCategories { get; set; } = true;
     public bool UpdaterEnabled { get; set; } = true;
+    public UpdateChannel UpdaterChannel { get; set; } = UpdateChannel.Stable;
     public string? UpdaterGitHubOwner { get; set; } = "Codename-11";
     public string? UpdaterGitHubRepo { get; set; } = "openclaw-windows-node";
+    public string? UpdaterGitHubBranch { get; set; } = "main";
+    public string? UpdaterGitHubCommitSha { get; set; }
     public List<UserNotificationRule>? UserRules { get; set; }
 
     private static readonly JsonSerializerOptions s_options = new() { WriteIndented = true };

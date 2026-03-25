@@ -89,10 +89,16 @@
                     <TextBlock Text="UPDATES" Style="{StaticResource CaptionTextBlockStyle}"
                                Foreground="#E74C3C" FontWeight="Bold"/>
 
-                    <ToggleSwitch x:Name="UpdaterEnabledToggle" Header="Check GitHub releases for updates on startup"/>
+                    <ToggleSwitch x:Name="UpdaterEnabledToggle" Header="Check for updates on startup"/>
+                    <ComboBox x:Name="UpdaterChannelComboBox" Header="Update channel" SelectedIndex="0">
+                        <ComboBoxItem Content="Stable releases" Tag="Stable"/>
+                        <ComboBoxItem Content="Beta / dev build" Tag="Beta"/>
+                    </ComboBox>
                     <TextBox x:Name="UpdaterOwnerTextBox" Header="GitHub owner" PlaceholderText="Codename-11"/>
                     <TextBox x:Name="UpdaterRepoTextBox" Header="GitHub repo" PlaceholderText="openclaw-windows-node"/>
-                    <TextBlock Text="The built-in updater and the PowerShell updater script use this owner/repo release feed."
+                    <TextBox x:Name="UpdaterBranchTextBox" Header="Beta branch" PlaceholderText="main"/>
+                    <TextBox x:Name="UpdaterCommitTextBox" Header="Beta commit SHA (optional)" PlaceholderText="Leave blank to follow the branch tip"/>
+                    <TextBlock Text="Stable keeps the existing GitHub Releases auto-updater. Beta/dev resolves a branch or exact commit, then opens the matching GitHub Actions run so you can download that build artifact. Commit SHA overrides branch."
                                Style="{StaticResource CaptionTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                TextWrapping="Wrap"

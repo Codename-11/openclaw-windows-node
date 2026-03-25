@@ -33,5 +33,19 @@ If you need to update manually on Windows:
 
 ## Notes
 - The app's updater now targets the configurable owner/repo feed instead of a hardcoded upstream project.
+- Stable channel uses GitHub Releases and can install updates in-app.
+- Beta/dev channel resolves a branch or exact commit SHA and opens the matching successful GitHub Actions run so you can fetch that artifact build.
 - Keep assembly/package versioning accurate so the updater can detect new versions correctly.
-- If you want separate `stable`/`beta` channels later, add them on top of the GitHub Releases workflow rather than inventing a second updater path.
+
+## Bootstrap install
+For normal Windows installs, use the bootstrap script from the fork:
+
+```powershell
+irm https://raw.githubusercontent.com/Codename-11/openclaw-windows-node/master/scripts/install.ps1 | iex
+```
+
+Optional launch after install:
+
+```powershell
+irm https://raw.githubusercontent.com/Codename-11/openclaw-windows-node/master/scripts/install.ps1 | iex -ArgumentList '-Launch'
+```

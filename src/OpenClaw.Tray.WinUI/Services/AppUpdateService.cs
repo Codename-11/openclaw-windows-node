@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Controls;
+using OpenClaw.Shared;
 using Updatum;
 
 namespace OpenClawTray.Services;
@@ -11,6 +13,7 @@ namespace OpenClawTray.Services;
 internal sealed class AppUpdateService
 {
     private readonly SettingsManager _settings;
+    private readonly GitHubBetaUpdateResolver _betaResolver = new();
 
     public AppUpdateService(SettingsManager settings)
     {
@@ -35,7 +38,18 @@ internal sealed class AppUpdateService
         };
     }
 
-    public string DescribeSource() => $"{_settings.UpdaterGitHubOwner}/{_settings.UpdaterGitHubRepo}";
+    public string DescribeSource()
+    {
+        var owner = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubOwner) ? SettingsManager.DefaultUpdaterGitHubOwner : _settings.UpdaterGitHubOwner.Trim();
+        var repo = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubRepo) ? SettingsManager.DefaultUpdaterGitHubRepo : _settings.UpdaterGitHubRepo.Trim();
+        if (_settings.UpdaterChannel == UpdateChannel.Beta)
+        {
+            var branch = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubBranch) ? "main" : _settings.UpdaterGitHubBranch.Trim();
+            var commit = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubCommitSha) ? null : _settings.UpdaterGitHubCommitSha.Trim();
+            return commit == null ? $"{owner}/{repo}@{branch} (beta)" : $"{owner}/{repo}@{commit} (beta)";
+        }
+        return $"{owner}/{repo}";
+    }
 
     public string GetExecutablePath()
     {
@@ -65,6 +79,11 @@ internal sealed class AppUpdateService
 
         try
         {
+            if (_settings.UpdaterChannel == UpdateChannel.Beta)
+            {
+                return await CheckForBetaUpdatesAsync(promptInstallAsync);
+            }
+
             var updater = CreateUpdater();
             Logger.Info($"Checking for updates from {DescribeSource()}...");
             var updateFound = await updater.CheckForUpdatesAsync();
@@ -91,6 +110,38 @@ internal sealed class AppUpdateService
             Logger.Warn($"Update check failed for {DescribeSource()}: {ex.Message}");
             return true;
         }
+    }
+
+    private async Task<bool> CheckForBetaUpdatesAsync(Func<string, string, Task<bool>> promptInstallAsync)
+    {
+        var owner = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubOwner) ? SettingsManager.DefaultUpdaterGitHubOwner : _settings.UpdaterGitHubOwner.Trim();
+        var repo = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubRepo) ? SettingsManager.DefaultUpdaterGitHubRepo : _settings.UpdaterGitHubRepo.Trim();
+        var branch = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubBranch) ? "main" : _settings.UpdaterGitHubBranch.Trim();
+        var commit = string.IsNullOrWhiteSpace(_settings.UpdaterGitHubCommitSha) ? null : _settings.UpdaterGitHubCommitSha.Trim();
+
+        Logger.Info($"Checking beta/dev update source {DescribeSource()}...");
+        var beta = await _betaResolver.ResolveAsync(owner, repo, branch, commit);
+        if (beta == null)
+        {
+            Logger.Warn($"No matching beta/dev build found for {DescribeSource()}");
+            return true;
+        }
+
+        var currentVersion = GetCurrentVersion();
+        var title = $"Beta build {beta.ShortCommitSha}";
+        var notes = $"{beta.CommitMessage}\n\nSource: {beta.SourceDescription}\nCurrent app version: {currentVersion}\n\nChoosing Download will open the matching GitHub Actions run so you can download/install that artifact.";
+
+        var shouldOpen = await promptInstallAsync(title, notes);
+        if (!shouldOpen)
+            return true;
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = beta.WorkflowRunUrl,
+            UseShellExecute = true,
+        });
+
+        return true;
     }
 
     public async Task<bool> DownloadAndInstallUpdateAsync(UpdatumManager updater)

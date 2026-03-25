@@ -70,6 +70,9 @@ public sealed partial class SettingsWindow : WindowEx
         UpdaterEnabledToggle.IsOn = _settings.UpdaterEnabled;
         UpdaterOwnerTextBox.Text = _settings.UpdaterGitHubOwner;
         UpdaterRepoTextBox.Text = _settings.UpdaterGitHubRepo;
+        UpdaterBranchTextBox.Text = _settings.UpdaterGitHubBranch;
+        UpdaterCommitTextBox.Text = _settings.UpdaterGitHubCommitSha ?? string.Empty;
+        UpdaterChannelComboBox.SelectedIndex = _settings.UpdaterChannel == UpdateChannel.Beta ? 1 : 0;
 
         // Advanced
         NodeModeToggle.IsOn = _settings.EnableNodeMode;
@@ -99,12 +102,19 @@ public sealed partial class SettingsWindow : WindowEx
 
         // Updater
         _settings.UpdaterEnabled = UpdaterEnabledToggle.IsOn;
+        _settings.UpdaterChannel = UpdaterChannelComboBox.SelectedIndex == 1 ? UpdateChannel.Beta : UpdateChannel.Stable;
         _settings.UpdaterGitHubOwner = string.IsNullOrWhiteSpace(UpdaterOwnerTextBox.Text)
             ? SettingsManager.DefaultUpdaterGitHubOwner
             : UpdaterOwnerTextBox.Text.Trim();
         _settings.UpdaterGitHubRepo = string.IsNullOrWhiteSpace(UpdaterRepoTextBox.Text)
             ? SettingsManager.DefaultUpdaterGitHubRepo
             : UpdaterRepoTextBox.Text.Trim();
+        _settings.UpdaterGitHubBranch = string.IsNullOrWhiteSpace(UpdaterBranchTextBox.Text)
+            ? "main"
+            : UpdaterBranchTextBox.Text.Trim();
+        _settings.UpdaterGitHubCommitSha = string.IsNullOrWhiteSpace(UpdaterCommitTextBox.Text)
+            ? null
+            : UpdaterCommitTextBox.Text.Trim();
         
         // Advanced
         _settings.EnableNodeMode = NodeModeToggle.IsOn;

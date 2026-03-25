@@ -73,7 +73,7 @@ Modern Windows 11-style system tray companion that connects to your local OpenCl
 - 🦞 **Lobster branding** - Pixel-art lobster tray icon with status colors
 - 🎨 **Modern UI** - Windows 11 flyout menu with dark/light mode support
 - 💬 **Quick Send** - Send messages via global hotkey (Ctrl+Alt+Shift+C)
-- 🔄 **Auto-updates** - Automatic updates from GitHub Releases
+- 🔄 **Auto-updates** - Stable updates from GitHub Releases, plus beta/dev branch-or-commit resolution for testing builds
 - 🌐 **Web Chat** - Embedded chat window with WebView2
 - 📊 **Live Status** - Real-time sessions, channels, and usage display
 - ⚡ **Activity Stream** - Dedicated flyout for live session, usage, node, and notification events

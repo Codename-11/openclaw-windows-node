@@ -25,11 +25,7 @@ public partial class App : Application
 {
     private const string PipeName = "OpenClawTray-DeepLink";
     
-    internal static readonly UpdatumManager AppUpdater = new("shanselman", "openclaw-windows-hub")
-    {
-        FetchOnlyLatestRelease = true,
-        InstallUpdateSingleFileExecutableName = "OpenClaw.Tray.WinUI",
-    };
+    private AppUpdateService? _appUpdateService;
 
     private TrayIcon? _trayIcon;
     private OpenClawGatewayClient? _gatewayClient;
@@ -250,6 +246,7 @@ public partial class App : Application
 
         // Initialize settings
         _settings = new SettingsManager();
+        _appUpdateService = new AppUpdateService(_settings);
 
         // First-run check
         if (string.IsNullOrWhiteSpace(_settings.Token))
@@ -1867,67 +1864,29 @@ public partial class App : Application
 
     private async Task<bool> CheckForUpdatesAsync()
     {
-        try
+        if (_appUpdateService == null)
         {
-            Logger.Info("Checking for updates...");
-            var updateFound = await AppUpdater.CheckForUpdatesAsync();
-
-            if (!updateFound)
-            {
-                Logger.Info("No updates available");
-                return true;
-            }
-
-            var release = AppUpdater.LatestRelease!;
-            var changelog = AppUpdater.GetChangelog(true) ?? "No release notes available.";
-            Logger.Info($"Update available: {release.TagName}");
-
-            var dialog = new UpdateDialog(release.TagName, changelog);
-            var result = await dialog.ShowAsync();
-
-            if (result == UpdateDialogResult.Download)
-            {
-                var installed = await DownloadAndInstallUpdateAsync();
-                return !installed; // Don't launch if update succeeded
-            }
-
-            return true; // RemindLater or Skip - continue
-        }
-        catch (Exception ex)
-        {
-            Logger.Warn($"Update check failed: {ex.Message}");
+            Logger.Warn("Update service unavailable; skipping update check");
             return true;
         }
+
+        return await _appUpdateService.CheckForUpdatesAsync(async (version, changelog) =>
+        {
+            var dialog = new UpdateDialog(version, changelog);
+            var result = await dialog.ShowAsync();
+            return result == UpdateDialogResult.Download;
+        });
     }
 
     private async Task<bool> DownloadAndInstallUpdateAsync()
     {
-        DownloadProgressDialog? progressDialog = null;
-        try
+        if (_appUpdateService == null)
         {
-            progressDialog = new DownloadProgressDialog(AppUpdater);
-            progressDialog.ShowAsync(); // Fire and forget
-
-            var downloadedAsset = await AppUpdater.DownloadUpdateAsync();
-
-            progressDialog?.Close();
-
-            if (downloadedAsset == null || !System.IO.File.Exists(downloadedAsset.FilePath))
-            {
-                Logger.Error("Update download failed or file missing");
-                return false;
-            }
-
-            Logger.Info("Installing update and restarting...");
-            await AppUpdater.InstallUpdateAsync(downloadedAsset);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Logger.Error($"Update failed: {ex.Message}");
-            progressDialog?.Close();
+            Logger.Warn("Update service unavailable; cannot install update");
             return false;
         }
+
+        return await _appUpdateService.DownloadAndInstallUpdateAsync(_appUpdateService.CreateUpdater());
     }
 
     #endregion

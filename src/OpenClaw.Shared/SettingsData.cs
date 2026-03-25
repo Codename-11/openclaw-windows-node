@@ -25,6 +25,9 @@ public class SettingsData
     public bool HasSeenActivityStreamTip { get; set; } = false;
     public bool NotifyChatResponses { get; set; } = true;
     public bool PreferStructuredCategories { get; set; } = true;
+    public bool UpdaterEnabled { get; set; } = true;
+    public string? UpdaterGitHubOwner { get; set; } = "Codename-11";
+    public string? UpdaterGitHubRepo { get; set; } = "openclaw-windows-node";
     public List<UserNotificationRule>? UserRules { get; set; }
 
     private static readonly JsonSerializerOptions s_options = new() { WriteIndented = true };

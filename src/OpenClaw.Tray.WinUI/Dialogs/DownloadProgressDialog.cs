@@ -10,10 +10,12 @@ public sealed class DownloadProgressDialog
 {
     private Window? _window;
     private readonly UpdatumManager? _updater;
+    private readonly string? _source;
 
-    public DownloadProgressDialog(UpdatumManager updater)
+    public DownloadProgressDialog(UpdatumManager updater, string? source = null)
     {
         _updater = updater;
+        _source = source;
     }
 
     public void ShowAsync()

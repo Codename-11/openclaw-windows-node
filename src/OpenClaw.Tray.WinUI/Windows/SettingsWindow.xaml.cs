@@ -66,6 +66,11 @@ public sealed partial class SettingsWindow : WindowEx
         NotifyStockCb.IsChecked = _settings.NotifyStock;
         NotifyInfoCb.IsChecked = _settings.NotifyInfo;
         
+        // Updater
+        UpdaterEnabledToggle.IsOn = _settings.UpdaterEnabled;
+        UpdaterOwnerTextBox.Text = _settings.UpdaterGitHubOwner;
+        UpdaterRepoTextBox.Text = _settings.UpdaterGitHubRepo;
+
         // Advanced
         NodeModeToggle.IsOn = _settings.EnableNodeMode;
     }
@@ -91,6 +96,15 @@ public sealed partial class SettingsWindow : WindowEx
         _settings.NotifyBuild = NotifyBuildCb.IsChecked ?? true;
         _settings.NotifyStock = NotifyStockCb.IsChecked ?? true;
         _settings.NotifyInfo = NotifyInfoCb.IsChecked ?? true;
+
+        // Updater
+        _settings.UpdaterEnabled = UpdaterEnabledToggle.IsOn;
+        _settings.UpdaterGitHubOwner = string.IsNullOrWhiteSpace(UpdaterOwnerTextBox.Text)
+            ? SettingsManager.DefaultUpdaterGitHubOwner
+            : UpdaterOwnerTextBox.Text.Trim();
+        _settings.UpdaterGitHubRepo = string.IsNullOrWhiteSpace(UpdaterRepoTextBox.Text)
+            ? SettingsManager.DefaultUpdaterGitHubRepo
+            : UpdaterRepoTextBox.Text.Trim();
         
         // Advanced
         _settings.EnableNodeMode = NodeModeToggle.IsOn;

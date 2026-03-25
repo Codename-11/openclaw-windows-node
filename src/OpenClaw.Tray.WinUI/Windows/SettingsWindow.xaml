@@ -84,6 +84,21 @@
                 <Button x:Name="TestNotificationButton" x:Uid="SettingsTestNotificationButton" Content="Send Test Notification" 
                         Click="OnTestNotification"/>
                 
+                <!-- Updater Section -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="UPDATES" Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="#E74C3C" FontWeight="Bold"/>
+
+                    <ToggleSwitch x:Name="UpdaterEnabledToggle" Header="Check GitHub releases for updates on startup"/>
+                    <TextBox x:Name="UpdaterOwnerTextBox" Header="GitHub owner" PlaceholderText="Codename-11"/>
+                    <TextBox x:Name="UpdaterRepoTextBox" Header="GitHub repo" PlaceholderText="openclaw-windows-node"/>
+                    <TextBlock Text="The built-in updater and the PowerShell updater script use this owner/repo release feed."
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap"
+                               Margin="0,-4,0,0"/>
+                </StackPanel>
+
                 <!-- Advanced Section -->
                 <StackPanel Spacing="8">
                     <TextBlock x:Uid="SettingsAdvancedHeader" Text="ADVANCED (EXPERIMENTAL)" Style="{StaticResource CaptionTextBlockStyle}"

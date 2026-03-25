@@ -10,6 +10,9 @@ namespace OpenClawTray.Services;
 /// </summary>
 public class SettingsManager
 {
+    public const string DefaultUpdaterGitHubOwner = "Codename-11";
+    public const string DefaultUpdaterGitHubRepo = "openclaw-windows-node";
+
     private static readonly string SettingsDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "OpenClawTray");
@@ -47,6 +50,11 @@ public class SettingsManager
     public bool EnableNodeMode { get; set; } = false;
     public bool HasSeenActivityStreamTip { get; set; } = false;
 
+    // Updater
+    public bool UpdaterEnabled { get; set; } = true;
+    public string UpdaterGitHubOwner { get; set; } = DefaultUpdaterGitHubOwner;
+    public string UpdaterGitHubRepo { get; set; } = DefaultUpdaterGitHubRepo;
+
     public SettingsManager()
     {
         Load();
@@ -80,6 +88,9 @@ public class SettingsManager
                     HasSeenActivityStreamTip = loaded.HasSeenActivityStreamTip;
                     NotifyChatResponses = loaded.NotifyChatResponses;
                     PreferStructuredCategories = loaded.PreferStructuredCategories;
+                    UpdaterEnabled = loaded.UpdaterEnabled;
+                    UpdaterGitHubOwner = loaded.UpdaterGitHubOwner ?? UpdaterGitHubOwner;
+                    UpdaterGitHubRepo = loaded.UpdaterGitHubRepo ?? UpdaterGitHubRepo;
                     if (loaded.UserRules != null)
                         UserRules = loaded.UserRules;
                 }
@@ -117,6 +128,9 @@ public class SettingsManager
                 HasSeenActivityStreamTip = HasSeenActivityStreamTip,
                 NotifyChatResponses = NotifyChatResponses,
                 PreferStructuredCategories = PreferStructuredCategories,
+                UpdaterEnabled = UpdaterEnabled,
+                UpdaterGitHubOwner = UpdaterGitHubOwner,
+                UpdaterGitHubRepo = UpdaterGitHubRepo,
                 UserRules = UserRules
             };
 

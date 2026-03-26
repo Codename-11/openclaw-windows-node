@@ -307,7 +307,7 @@ jobs:
       uses: azure/login@v2
 
     - name: Sign ARM64 Executables
-      if: secrets.AZURE_CLIENT_ID != ''
+      if: false
       uses: azure/trusted-signing-action@v1
       with:
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -380,7 +380,7 @@ jobs:
       uses: azure/login@v2
 
     - name: Sign Installer
-      if: secrets.AZURE_CLIENT_ID != ''
+      if: false
       uses: azure/trusted-signing-action@v1
       with:
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
